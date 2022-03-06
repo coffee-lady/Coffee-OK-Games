@@ -1,18 +1,10 @@
-local App = require('main.app')
-local Nakama = require('main.scripts.include.nakama.nakama')
+local Nakama = require('CoffeeOKGames.nakama.nakama')
 
-local Debug = App.libs.debug
-local Async = App.libs.async
-
-local TempFileConfig = App.config.app.file_temp
-local FILE_TMP = TempFileConfig.filename
-local KEY_DATA_VERSION = TempFileConfig.keys.data_version
+local FILE_TMP = 'temp'
+local KEY_DATA_VERSION = 'data_version'
 local DEFAULT_DATA_VERSION = '*'
-local DEBUG = App.config.debug_mode.PlayerDataStorage
 
 local SAVE_DELAY = 3
-
-local debug_logger = Debug('[OK] PlayerDataStorageAdapter', DEBUG)
 
 local OKStorage = class('OKStorage')
 
@@ -57,24 +49,7 @@ function OKStorage:get_all_async(filename, keys)
 
     local response = Nakama:load_data_async(request_data)
 
-    -- debug_logger:log('get all data from  server. response ok:', response.rc == 0, debug_logger:inspect({
-    --     RESPONSE = response,
-    -- }, {
-    --     depth = 6,
-    -- }))
-
     if not response or response.rc ~= 0 then
-        debug_logger:log(
-            'ERROR on get_from_server:',
-            debug_logger:inspect(
-                {
-                    RESPONSE = response
-                },
-                {
-                    depth = 6
-                }
-            )
-        )
         return {}
     end
 
@@ -139,22 +114,7 @@ function OKStorage:_post_write_requests_async()
         return
     end
 
-    debug_logger:log('set queue data to  server. response ok:', response.rc == 0)
-
     if response.rc ~= 0 then
-        debug_logger:log(
-            'ERROR on set_to_server:',
-            debug_logger:inspect(
-                {
-                    RESPONSE = response,
-                    REQUEST = request_data
-                },
-                {
-                    depth = 4
-                }
-            )
-        )
-
         self.event_save_error:emit()
         return
     end

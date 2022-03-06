@@ -1,18 +1,10 @@
-local App = require('main.app')
 --- @type OKGamesSDK
 local OKGames = require('OKGames.okgames')
-local NakamaAdapter = require('main.scripts.common.platform.common.adapters.nakama.nakama_adapter')
-
-local Debug = App.libs.debug
-
-local DEBUG = App.config.debug_mode.PaymentsService
-local debug_logger = Debug('[OK] PaymentsService', DEBUG)
+local Nakama = require('CoffeeOKGames.nakama.nakama')
 
 local OKPayments = {}
 
 function OKPayments.init()
-    debug_logger:log_dump(NakamaAdapter:get_catalog_async())
-    debug_logger:log_dump(NakamaAdapter:get_user_wallet_async())
 end
 
 -- return success, error
@@ -27,13 +19,11 @@ function OKPayments.purchase_async(id, title, price)
         }
     )
 
-    debug_logger:log('purchased', id, debug_logger:inspect(result))
-
     return result.status
 end
 
 function OKPayments.sync_wallet_events_async(wallet)
-    return NakamaAdapter:sync_wallet_events(
+    return Nakama:sync_wallet_events(
         {
             wallet_items = wallet
         }
@@ -41,7 +31,7 @@ function OKPayments.sync_wallet_events_async(wallet)
 end
 
 function OKPayments.get_wallet_async()
-    local wallet = NakamaAdapter:get_user_wallet_async()
+    local wallet = Nakama:get_user_wallet_async()
 
     return wallet
 end
@@ -64,7 +54,7 @@ function OKPayments._process_purchases(purchases)
 end
 
 function OKPayments.get_catalog_async()
-    local data = NakamaAdapter:get_catalog_async()
+    local data = Nakama:get_catalog_async()
 
     if not data then
         return {}

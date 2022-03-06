@@ -1,7 +1,7 @@
 --- @type OKGamesSDK
 local OKGames = require('OKGames.okgames')
 local App = require('main.app')
-local NakamaAdapter = require('main.scripts.include.nakama.nakama')
+local NakamaAdapter = require('CoffeeOKGames.nakama.nakama')
 
 local Debug = App.libs.debug
 local Async = App.libs.async
